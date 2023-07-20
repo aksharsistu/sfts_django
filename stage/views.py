@@ -14,8 +14,14 @@ def setStage(request):
         return HttpResponseBadRequest('Stage already allocated or No such stage')
 
 
+'''
+Add proxy_headers to nginx config file with X-Real-IP for it to forward the real ip address to gunicorn.
+'''
+
+
 def getStage(request):
-    ipAddress = request.META.get('REMOTE_ADDR')
+    # ipAddress = request.headers['X-Real-IP'].split(',')[0] # Use this when deployed with nginx and gunicorn
+    ipAddress = request.META.get('REMOTE_ADDR')  # Use this when using development server
     try:
         q = StageData.objects.get(ipAddress=ipAddress)
         return JsonResponse({'stageName': q.stageName.line_code, 'placeName': q.placeName})
